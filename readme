@@ -1,0 +1,69 @@
+# 📄 AI Resume ATS Analyzer
+
+Upload a resume (PDF, DOCX, TXT, or a PNG/JPG photo), optionally paste a job description, and get:
+
+- An **estimated ATS score** (0-100) with a 5-part breakdown
+- **Matched and missing keywords**
+- **Prioritised improvements** (High / Medium / Low)
+- **Bullet-point rewrites** based on your real bullets
+- Formatting problems that can trip up ATS parsers
+- A downloadable JSON report
+
+Built with **Streamlit** and **Google Gemini Flash**.
+
+> The score is an AI-based estimate, not the output of a real ATS.
+
+## How the score works
+
+Gemini rates five categories from 0-100. The app then computes the overall score itself, so it is consistent:
+
+| Category | Weight |
+|---|---|
+| Keyword & skills match | 30% |
+| Experience & impact | 25% |
+| Formatting & parseability | 20% |
+| Section completeness | 15% |
+| Language & clarity | 10% |
+
+## Run locally
+
+```bash
+git clone https://github.com/<your-username>/ats-resume-analyzer.git
+cd ats-resume-analyzer
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+Get a free Gemini API key at https://aistudio.google.com/apikey, then either:
+
+- paste it into the "Gemini API key" box on the main page, or
+- set it as an environment variable: `export GEMINI_API_KEY="your-key"`, or
+- create `.streamlit/secrets.toml` containing `GEMINI_API_KEY = "your-key"`
+
+## Deploy on Streamlit Community Cloud
+
+1. Push this repo to GitHub.
+2. Go to https://share.streamlit.io and sign in with GitHub.
+3. Click **Create app**, choose the repo, branch `main`, and main file `app.py`.
+4. Open **Advanced settings → Secrets** and add:
+   ```toml
+   GEMINI_API_KEY = "your-key"
+   ```
+5. Click **Deploy**.
+
+## Project structure
+
+```
+app.py            # Streamlit app
+requirements.txt  # Dependencies
+README.md
+.gitignore        # Keeps secrets out of Git
+```
+
+## Notes
+
+- Scanned or image-only resumes are read by Gemini (OCR) automatically, but real ATS software can't do that - export a text-based PDF/DOCX before applying.
+- Resume text is sent to Google's Gemini API. Don't upload anything you aren't comfortable sharing.
+- The default model is `gemini-flash-latest` (always Google's newest stable Flash). You can change it in the sidebar, e.g. `gemini-2.5-flash`. If a model name is wrong, the app automatically falls back to a working one.
